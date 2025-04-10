@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set the Spring Security logging to DEBUG level -->
+    <logger name="org.springframework.security" level="DEBUG"/>
+    
+    <!-- Set specific JWT related classes to DEBUG level -->
+    <logger name="ca.mcgill.ecse321.gameorganizer.security.JwtUtil" level="DEBUG"/>
+    <logger name="ca.mcgill.ecse321.gameorganizer.security.JwtAuthenticationFilter" level="DEBUG"/>
+    <logger name="ca.mcgill.ecse321.gameorganizer.services.UserDetailsServiceImpl" level="DEBUG"/>
+    <logger name="ca.mcgill.ecse321.gameorganizer.controllers.AccountController" level="DEBUG"/>
+    <logger name="ca.mcgill.ecse321.gameorganizer.services.AccountService" level="DEBUG"/>
+    
+    <!-- Set the default log level for Spring framework components -->
+    <logger name="org.springframework" level="INFO"/>
+    
+    <!-- Set the default log level for Hibernate -->
+    <logger name="org.hibernate" level="INFO"/>
+    
+    <!-- Base logger for the application -->
+    <logger name="ca.mcgill.ecse321.gameorganizer" level="INFO"/>
+    
+    <!-- Root logger configuration -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration> 

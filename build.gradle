@@ -1,0 +1,116 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id("io.freefair.lombok") version "8.12.1"
+    id 'jacoco'
+}
+
+group = 'ca.mcgill.ecse321'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'jakarta.validation:jakarta.validation-api'
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'com.h2database:h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.h2database:h2'
+
+    // Servlet API
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test' // Add Spring Security Test dependency
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // Email support - updated for Spring Boot 3.x compatibility
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'jakarta.mail:jakarta.mail-api:2.1.2'
+    implementation 'org.eclipse.angus:jakarta.mail:2.0.2'
+    
+    // Google OAuth2 and Gmail API
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'com.google.api-client:google-api-client:2.2.0'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.34.1'
+    implementation 'com.google.apis:google-api-services-gmail:v1-rev20230612-2.0.0'
+
+    // Dotenv for .env file loading
+    implementation 'io.github.cdimascio:dotenv-java:2.3.2'
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:5.10.0'
+
+    // Apache HttpClient for TestRestTemplate cookie management
+    testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1' 
+
+    // Spring Security Test for @WithMockUser etc.
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+// Ensure unit tests run with JUnit
+tasks.named('test') {
+    useJUnitPlatform()
+    // JaCoCo report runs after tests
+    finalizedBy tasks.jacocoTestReport
+
+    // Add this block to show standard output/error streams
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed" // Keep showing test results
+    }
+}
+
+// Configure JaCoCo for test coverage
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+    dependsOn tasks.test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/jacocoHtml')
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn tasks.jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.50 // 50% test coverage threshold
+            }
+        }
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform()
+    shouldRunAfter test
+    filter {
+        includeTestsMatching "ca.mcgill.ecse321.gameorganizer.integration.*IntegrationTests"
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+check.dependsOn integrationTest
