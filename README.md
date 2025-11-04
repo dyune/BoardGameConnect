@@ -52,6 +52,7 @@ The application uses JSON Web Tokens (JWT) for authentication. You need to confi
 - The JWT secret must be at least 64 bytes long as it's using the HS512 algorithm.
 - The JWT secret must NOT contain hyphens or special characters that are invalid in Base64 encoding. Use only letters, numbers, and underscores.
 
+## Commit Rules
 ```<type of commit>: <short description of feature(s) affected/what was done>```
 
 * ```Ex: Feature: Implementing email sending to customers upon successful cart checkout```
